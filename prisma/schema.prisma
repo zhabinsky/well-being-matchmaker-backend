@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserRunningSession {
+  id Int @id @default(autoincrement())
+
+  distanceKm Float @default(0)
+
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model UserRunningSessionExpense {
+  id Int @id @default(autoincrement())
+
+  distanceKm Float @default(0)
+
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model ChatMessage {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  userMatch   UserMatch @relation(fields: [userMatchId], references: [id])
+  userMatchId Int
+
+  content String
+
+  userFrom   User @relation(fields: [userFromId], references: [id], name: "userMessageFrom")
+  userFromId Int
+  userTo     User @relation(fields: [userToId], references: [id], name: "userMessageTo")
+  userToId   Int
+}
+
+model UserMatch {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  user1   User @relation(fields: [userId1], references: [id], name: "user1")
+  userId1 Int
+
+  user2       User          @relation(fields: [userId2], references: [id], name: "user2")
+  userId2     Int
+  ChatMessage ChatMessage[]
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name String @default("No name")
+
+  createdAt DateTime @default(now())
+  birthday  DateTime @default(now())
+
+  latitude  Float @default(60.190133)
+  longitude Float @default(24.964612)
+
+  gender          Gender   @default(MALE)
+  genderInterests Gender[] @default([FEMALE])
+
+  email String
+
+  picture1 String @default("https://cdn.pixabay.com/photo/2017/08/06/09/50/people-2590796_1280.jpg")
+
+  userRunningSessions        UserRunningSession[]
+  userRunningSessionExpenses UserRunningSessionExpense[]
+
+  tags Tags[] @default([children_yes, zodiac_scorpion, pets_yes, cats, dogs])
+
+  userMatches1 UserMatch[] @relation(name: "user1")
+  userMatches2 UserMatch[] @relation(name: "user2")
+
+  userMessagesFrom ChatMessage[] @relation(name: "userMessageFrom")
+  userMessageTo    ChatMessage[] @relation(name: "userMessageTo")
+
+  @@unique([email])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  TRANS_MAN
+  TRANS_WOMAN
+  OTHER
+}
+
+enum Tags {
+  zodiac_scorpion
+  children_yes
+  children_no
+  pets_yes
+  pets_no
+  cats
+  dogs
+}

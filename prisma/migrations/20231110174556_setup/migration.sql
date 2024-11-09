@@ -1,0 +1,8 @@
+-- CreateEnum
+CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'TRANS_MAN', 'TRANS_WOMAN', 'OTHER');
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "gender" "Gender" NOT NULL DEFAULT 'MALE',
+ADD COLUMN     "genderInterests" "Gender"[] DEFAULT ARRAY['FEMALE']::"Gender"[],
+ADD COLUMN     "latitude" DOUBLE PRECISION NOT NULL DEFAULT 60.190133,
+ADD COLUMN     "longitude" DOUBLE PRECISION NOT NULL DEFAULT 24.964612;
